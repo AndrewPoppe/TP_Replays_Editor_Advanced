@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Replays Editor</title>
+	<script type="text/javascript" src="js/FileSaver.js"></script>
+	<script type="text/javascript" src="js/jszip.min.js"></script>
+</head>
+<body>
+	<h1>TagPro Replays Raw File Editor</h1>
+	<div>
+		<label for="input">Select Raw Files (You can select multiple files):  </label>
+		<input type="file" name="input" id="input" multiple accept=".txt">
+	</div>
+	<br><br>
+	<div id="optionsContainer">
+		<input type="checkbox" id="names" name="names" value="names"> Remove names<br>
+		<input type="checkbox" id="flairs" name="flairs" value="flairs"> Remove flairs<br>
+		<input type="checkbox" id="degrees" name="degrees" value="degrees"> Remove degrees<br>
+		<br>
+		<button id="submitButton">Run Editor</button>
+	</div>
+	<script type="text/javascript" src="js/editor.js"></script>
+</body>
+</html>
