@@ -126,8 +126,16 @@ function cloneBall(positions, frame) {
 	clone.y = newy;
 	clone.me = 'other';
 
+	// remove other players
+	Object.keys(positions).filter(key => key.startsWith('player')).forEach(player => {
+		positions[player].me !== 'me' &&
+		positions[player].dead.splice(frame + 1, len - 1, ...Array(len - 1).fill(true));
+	});
+	
+
 	let cloneName = `player6666`;
 	positions[cloneName] = clone;
+
 	return positions;
 }
 
@@ -335,11 +343,15 @@ function editFiles() {
 // package the results and download
 function finish(results) {
 	if (results.length === 1) {
+		let dur = getDuration(results[0].positions);
+		let name = results[0].name.replace('.txt', `_${dur}ms.txt`);
 		let blob = new Blob([JSON.stringify(results[0].positions)], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, results[0].name);
+		saveAs(blob, name);
 	} else {
 		for (let file of results) {
-			zip.file(file.name, JSON.stringify(file.positions));
+			let dur = getDuration(file.positions);
+			let name = file.name.replace('.txt', `_${dur}ms.txt`);
+			zip.file(name, JSON.stringify(file.positions));
 		}
 		zip.generateAsync({type:'blob'})
 		.then(content => {
@@ -360,7 +372,10 @@ function getMe(positions) {
 
 submitButton.addEventListener('click', editFiles);
 
-
+// get number of frames in replay
+function getFrames(positions) {
+	return positions.clock.length;
+}
 
 
 

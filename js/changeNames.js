@@ -34,9 +34,9 @@ function applyLyrics(me, positions, offset, lyrics) {
 	lyrics.forEach(lyric => {
 		let start = times.findIndex(t => {return t > Number(lyric.start)}) || 1;
 		start = Math.min(Math.max(start - 1, 0), times.length - 1);
-		let end = times.map(t => t < Number(lyric.end)).lastIndexOf(false);
+		let end = times.map(t => t < Number(lyric.end)).lastIndexOf(true);
 		end = end < 0 ? times.length - 1 : end;
-		end = Math.min(Math.max(end, 0), times.length - 1);
+		end = Math.min(end, times.length - 1);
 		let numFrames = end - start + 1;
 		let nameReplacement = new Array(numFrames).fill(lyric.lyric);
 		positions[me].name.splice(start, numFrames, ...nameReplacement);
@@ -54,7 +54,7 @@ function changeName(me, positions, offset, lyrics) {
 		positions.player6666.name = p.name;
 		positions.player6666.auth.fill(true);
 	}
-	delete positions[me];
+	if (me !== 'player99999') delete positions[me];
 	return positions;
 }
 
