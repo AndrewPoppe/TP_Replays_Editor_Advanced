@@ -13,9 +13,14 @@ let zip = new JSZip(),
 	submitButton = document.querySelector('#submitButton'),
 	doSwitch = document.querySelector('#switch'),
 	doHorizontal = document.querySelector('#doHorizontal'),
-	doVertical = document.querySelector('#doVertical');
+	doVertical = document.querySelector('#doVertical'),
+	doLyrics = document.querySelector('#lyrics'),
+	lyricsInput = document.querySelector('#lyricsFile');
 
 
+// Globals
+let lyrics;
+let offset = 0;
 
 
 ///////////////////////
@@ -252,6 +257,11 @@ function editPositions(positions, options) {
 			location = {x: x, y: y};
 		positions = fixCamera(positions, location);
 	}
+	if (options.doLyrics) {
+		let result = runLyricsChanger(positions, offset, lyrics);
+		positions = result.positions;
+		offset = result.offset;
+	}
 	return positions;
 }
 
@@ -259,6 +269,19 @@ function editPositions(positions, options) {
 /////////////////////
 // Deal with files //
 /////////////////////
+
+function readCSV() {
+	let files = lyricsInput.files;
+	if (files.length === 0) return;
+	let file = files[0];
+	let reader = new FileReader();
+	reader.onload = function(e) {
+		let text = e.target.result;
+		lyrics = $.csv.toObjects(text);
+	}
+	reader.readAsText(file);
+}
+lyricsInput.addEventListener('change', readCSV);
 
 function setupReader(files, i, results, options) {
 	let file = files[i];
@@ -300,7 +323,8 @@ function editFiles() {
 					cloneFrame: cloneFrame.value,
 					doSwitch: doSwitch.checked,
 					doHorizontal: doHorizontal.checked,
-					doVertical: doVertical.checked
+					doVertical: doVertical.checked,
+					doLyrics: doLyrics.checked,
 				}
 
 	if (numFiles === 0) return alert('No files selected');
@@ -331,13 +355,7 @@ function finish(results) {
 
 // get the key for the "me" ball
 function getMe(positions) {
-	let me;
-	for (let key in positions) {
-		if (key.startsWith('player') && positions[key].me === 'me') {
-			me = key;
-		}
-	}
-	return me;
+	return Object.keys(positions).filter(key => positions[key].me === 'me')[0]
 }
 
 submitButton.addEventListener('click', editFiles);
